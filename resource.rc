@@ -1,3 +1,3 @@
 #include "resource.h"
 
-IDI_ICON        ICON        "G:\\Script\\C++\\VisDatCB\\bin\\Release\\VisDatCB.ico"
+IDI_ICON        ICON        "bin\\Release\\VisDatCB.ico"

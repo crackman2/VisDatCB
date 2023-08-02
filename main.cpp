@@ -71,6 +71,7 @@ class VisDat {
 		int pthickness = 3;
 		DWORD col32 = 0xFFFFFFFF;
 		WORD  col16 = 0xFFFF;
+		BYTE  col8  = 0xFF;
 		bool clickflip = true;
 		bool firstclick = true;
 		int drawx1, drawy1, drawx2, drawy2;
@@ -92,6 +93,7 @@ class VisDat {
 
 			/* Neat Console Title */
 			system("title VisDatCB Console");
+			std::cout << "v1.0 https://github.com/crackman2/VisDatCB" << std::endl;
 
 
 			/* Init everything */
@@ -305,6 +307,31 @@ class VisDat {
 						}
 
 					delete[] Data;
+				} else if(sfBitDepth == 8){
+					const unsigned int DataSize = (sfWinXScaled / sfScale)*(sfWinYScaled / sfScale);
+					BYTE *Data = new BYTE[DataSize];
+					ReadProcessMemory(processHandle, (LPVOID)StartAddress, Data, DataSize, 0);
+						/* Draw with scaling */
+						unsigned int vectorindex = 0;
+						for (unsigned int y = 0; y < sfWinYScaled; y += sfScale) {
+							for (unsigned int x = 0; x < sfWinXScaled; x += sfScale) {
+								for (unsigned int yd = 0; yd < sfScale; yd++) {
+									for (unsigned int xd = 0; xd < sfScale; xd++) {
+										/* Check for BitDepth 32 or 16 */
+
+										if (UseVexRender) {
+											vex.append(sf::Vertex(sf::Vector2f(x + xd, y + yd), sf::Color(useful::rgb8_to_rgb32(Data[vectorindex]))));
+										}
+										else {
+											sfIMG.setPixel(x + xd, y + yd, sf::Color(useful::rgb8_to_rgb32(Data[vectorindex])));
+										}
+									}
+								}
+								vectorindex += 1;
+							}
+						}
+
+					delete[] Data;
 				}
 			}
 			ClearIMGVoid();
@@ -409,12 +436,17 @@ class VisDat {
 			else if (sfBitDepth == 16) {
 				ReadProcessMemory(processHandle, (LPVOID)(StartAddress + (MouseX + MouseY * (sfWinXScaled / sfScale))*2), &col16, 2, 0);
 			}
+			else if (sfBitDepth == 8) {
+				ReadProcessMemory(processHandle, (LPVOID)(StartAddress + (MouseX + MouseY * (sfWinXScaled / sfScale))), &col8, 1, 0);
+			}
 		}
 
 		void cSaveAddressToClipboard() {
 			int step = 4;
 			if (sfBitDepth == 16)
 				step = 2;
+            if (sfBitDepth == 16)
+				step = 1;
 
 			char last_char;
 
@@ -432,6 +464,8 @@ class VisDat {
 			int step = 4;
 			if (sfBitDepth == 16)
 				step = 2;
+            if (sfBitDepth == 8)
+				step = 1;
 
 			std::stringstream clip;
 			clip << std::hex << StartAddress;
@@ -449,6 +483,8 @@ class VisDat {
 			int step = 4;
 			if (sfBitDepth == 16)
 				step = 2;
+            if (sfBitDepth == 8)
+				step = 1;
 			std::stringstream hover;
 			hover << std::hex << StartAddress + (MouseX + (MouseY*(sfWinXScaled / sfScale))) * step;
 			DWORD read = 0;
@@ -523,12 +559,13 @@ class VisDat {
 						for (int xe = -pthickness / 2; xe < (pthickness / 2) + adder;xe++) {
 							if (sfBitDepth == 32) {
 								VirtualProtectEx(processHandle, (LPVOID)(LPVOID)(StartAddress + (((DWORD)X + xe) + ((DWORD)Y + ye) * (sfWinXScaled / sfScale)) * 4), 4, PAGE_EXECUTE_READWRITE, NULL);
-
 								WriteProcessMemory(processHandle, (LPVOID)(StartAddress + (((DWORD)X + xe) + ((DWORD)Y + ye) * (sfWinXScaled / sfScale)) * 4), &col32, 4, 0);
-
 							}
 							else if (sfBitDepth == 16) {
 								WriteProcessMemory(processHandle, (LPVOID)(StartAddress + (((DWORD)X + xe) + ((DWORD)Y + ye) * (sfWinXScaled / sfScale)) * 2), &col16, 2, 0);
+							}
+							else if (sfBitDepth == 8) {
+								WriteProcessMemory(processHandle, (LPVOID)(StartAddress + (((DWORD)X + xe) + ((DWORD)Y + ye) * (sfWinXScaled / sfScale))), &col8, 1, 0);
 							}
 						}
 					} // put pixel at (X,Y)
@@ -539,6 +576,9 @@ class VisDat {
 					}
 					else if (sfBitDepth == 16) {
 						WriteProcessMemory(processHandle, (LPVOID)(StartAddress + (((DWORD)X) + ((DWORD)Y) * (sfWinXScaled / sfScale)) * 2), &col16, 2, 0);
+					}
+					else if (sfBitDepth == 8) {
+						WriteProcessMemory(processHandle, (LPVOID)(StartAddress + (((DWORD)X) + ((DWORD)Y) * (sfWinXScaled / sfScale))    ), &col8 , 1, 0);
 					}
 				}
 				X += Xinc;           // increment in x at each step
