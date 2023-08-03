@@ -48,6 +48,7 @@
 			<Add directory="SFML-2.6.0/lib" />
 		</Linker>
 		<Unit filename="SimpleIni.h" />
+		<Unit filename="font_data.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="resource.h" />
 		<Unit filename="resource.rc">

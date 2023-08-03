@@ -1,0 +1,10 @@
+[settings]
+title = JoeQuake
+winx = 512
+winy = 256
+scale = 2
+bitdepth = 8
+start = 400000
+textsize = 14
+bUseVexRender = 0
+bFullPageReading = 0
