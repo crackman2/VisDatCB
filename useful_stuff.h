@@ -237,15 +237,21 @@ namespace useful {
     }
 
     std::string ExtractFileName(const std::string &path) {
-    // Find the last occurrence of the directory separator character
-    size_t pos = path.find_last_of("\\/");
-    if (pos != std::string::npos) {
-        // Return the substring after the last separator
-        return path.substr(pos + 1);
+        // Find the last occurrence of the directory separator character
+        size_t pos = path.find_last_of("\\/");
+        if (pos != std::string::npos) {
+            // Return the substring after the last separator
+            return path.substr(pos + 1);
+        }
+        // If no separator found, return the original path
+        return path;
     }
-    // If no separator found, return the original path
-    return path;
-}
+
+    std::string BoolToString(bool b){
+        if(b)
+            return "true";
+        return "false";
+    }
 }
 
 #endif // USEFUL_STUFF_H

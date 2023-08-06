@@ -11,6 +11,19 @@
 
 namespace controlchecker{
 
+void HandleLeftAndRight(VisDat * vis, int resizeSpeed){
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)){
+        if(resizeSpeed > 0)
+            vis->StartAddress++;
+        else
+            vis->StartAddress--;
+    } else {
+        vis->cSetWidth(resizeSpeed);
+    }
+}
+
+
+
 void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, CSimpleIniA * config){
         /* Mousewheel counts*/
         if (event->type == sf::Event::MouseWheelMoved) {
@@ -39,6 +52,10 @@ void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, C
         char ArrowDirection = 0;
 
         if(useful::wasAnArrowKeyPressed(&ArrowDirection)){
+            DWORD resizeSpeed = 1;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                resizeSpeed = 8;
+
             switch(ArrowDirection){
             case 'U':
                 vis->cScroll(vis->ScrollSpeedKeyboard, sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
@@ -46,6 +63,13 @@ void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, C
             case 'D':
                 vis->cScroll(-(vis->ScrollSpeedKeyboard), sf::Keyboard::isKeyPressed(sf::Keyboard::LShift));
                 break;
+            case 'L':
+                HandleLeftAndRight(vis, -resizeSpeed);
+                break;
+            case 'R':
+                HandleLeftAndRight(vis, resizeSpeed);
+                break;
+
             }
         }
 
@@ -53,8 +77,6 @@ void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, C
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
             vis->SkipUnreadableMemory();
         }
-
-
 
         /* Get Mouse Position */
         if (event->type == sf::Event::MouseMoved) {
@@ -75,6 +97,11 @@ void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, C
                 } else {
                     vis->cSaveAddressToClipboard();                                                     /* Left          ->  Save current address to clipboard */
                 }
+
+                while(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
+                    Sleep(10);
+                }
+
             }
         }
 
@@ -95,6 +122,14 @@ void CheckControls(VisDat * vis, sf::Event * event, sf::RenderWindow * window, C
                 case 16:
                     vis->sfBitDepth = 32;
                     break;
+            }
+        }
+
+        /* flip FullPageReading */
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)){
+            vis->FullPageReading = !(vis->FullPageReading);
+            while(sf::Keyboard::isKeyPressed(sf::Keyboard::F)){
+                Sleep(10);
             }
         }
 

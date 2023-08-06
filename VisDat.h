@@ -414,21 +414,25 @@ public:
         if (sfBitDepth == 16)
             step = 1;
 
-        char last_char;
+        if (MouseX < (sfWinXScaled / sfScale)){
+            char last_char;
+            std::stringstream clip, temp;
+            temp << std::hex << std::uppercase << (StartAddress + (MouseX + (MouseY*(sfWinXScaled / sfScale))) * step);
+            clip << temp.str();
+            temp.seekg(-1, std::ios::end);
+            temp >> last_char;
+            clip << last_char;
+            useful::toClipboard(clip.str());
+            std::cout << "Address: 0x" << temp.str() << " saved to clipboard!" << std::endl;
+        } else {
+            std::cout << "Can't save crickets to clipboard." << std::endl;
+        }
 
-        std::stringstream clip, temp;
-        temp << std::hex << StartAddress + (MouseX + (MouseY*(sfWinXScaled/sfScale))) * step;
-        clip << temp.str();
-        temp.seekg(-1, std::ios::end);
-        temp >> last_char;
-        clip << last_char;
-        useful::toClipboard(clip.str());
-        std::cout << "Address: 0x" << clip.str() << " saved to clipboard!" << std::endl;
     }
 
     void cSaveAddressToConfig(CSimpleIniA * cfg) {
         std::stringstream clip;
-        clip << std::hex << StartAddress;
+        clip << std::hex << std::uppercase << StartAddress + (MouseX + (MouseY*(sfWinXScaled / sfScale))) * (sfBitDepth/8);
         cfg->SetValue("settings", "start",std::string(clip.str()).c_str());
         cfg->SaveFile(std::string(useful::ExePath() + std::string("/VisDat_Config.ini")).c_str());
         std::cout << "Current View Address: 0x" << clip.str() << " saved to config!" << std::endl;
@@ -440,11 +444,7 @@ public:
     }
 
     std::string MouseHover() {
-        int step = 4;
-        if (sfBitDepth == 16)
-            step = 2;
-        if (sfBitDepth == 8)
-            step = 1;
+        unsigned int step = (sfBitDepth/8);
         std::stringstream hover;
         if(MouseX < (sfWinXScaled / sfScale)){
             hover << std::uppercase << std::hex << StartAddress + (MouseX + (MouseY*(sfWinXScaled / sfScale))) * step;
@@ -462,24 +462,51 @@ public:
 
     /* skip inaccessible memory until hitting something */
     void SkipUnreadableMemory(){
-        std::cout << "Skipping inaccessible memory. Press 'Esc' to abort.\r";
+        std::cout << "Skipping inaccessible memory and zeros. Hold 'Esc' in console to abort.\r";
 
-        BYTE trash = 0;
+        DWORD trash = 0; // DWORD to read 4 bytes at a time
+        DWORD step = 1;//sfBitDepth/8;  //Increasing the Step breaks precision. needs to be fixed
         bool aborted = false;
-        while(!(ReadProcessMemory(processHandle,(LPVOID)(StartAddress + sfWinX * sfWinY * (sfBitDepth / 8)),&trash,sizeof(BYTE),0))){
-            if(GetAsyncKeyState(0x1B) != 0){
+
+        DWORD ScreenValue = ((sfWinXScaled/sfScale) * (sfWinYScaled/sfScale)) * step;
+
+        //std::cout << std::endl;
+        //std::cout << "START SEARCHING AT: " << std::hex << std::uppercase << StartAddress << std::endl;
+        //std::cout << "SCREEN H: " << std:: dec << (sfWinXScaled/sfScale) << " W: " << std::dec << (sfWinYScaled/sfScale) << std::endl;
+
+
+
+        while(true){
+            /* If RPM fails, continue searching */
+            while(!(ReadProcessMemory(processHandle,(LPVOID)(StartAddress + ScreenValue),&trash,step,0))){
+                if(GetAsyncKeyState(0x1B) != 0){ //Panic Abort (Escape key)
+                    aborted = true;
+                    break;
+                }
+                StartAddress+=step;
+            }
+
+            /* If reading was successful, we need to check if the value that was read is non zero (because zeros are boring and can be skipped too) */
+            if(trash != 0){
+                break;
+            } else {
+                StartAddress+=step; //
+            }
+
+            if(GetAsyncKeyState(0x1B) != 0){ //Panic Abort (Escape key)
                 aborted = true;
                 break;
             } //Escape key
-
-            StartAddress++;
         }
-        //StartAddress+=sfWinX * sfWinY * (sfBitDepth / 8); //Put top of screen as beginning of found data
+        //std::cout << "START: " << std::hex << std::uppercase << StartAddress << std::endl;
+
         if(!aborted){
-            std::cout << "Found something!                                     \r";
+            std::cout << "Found something! at:" << std::hex << std::uppercase << StartAddress + ScreenValue << "                                     \r";
         } else {
             std::cout << "Aborted                                              \r";
         }
+
+        StartAddress+=ScreenValue; //Put top of screen as beginning of found data
 
     }
 

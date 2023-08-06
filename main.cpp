@@ -80,8 +80,13 @@ int main() {
                            "Left click + LShift = Save current view to VisDat_Config.ini\n"
                            "Right click = Paint at mouse position\n"
                            "Middle click = Copy color at mouse position to paint with)\n"
+                           "Enter = skip inaccessible memory\n"
                            "+ and - to increase or decrease BitDepth\n"
                            "Arrow keys up and down to auto-scroll\n"
+                           "Arrow keys left and right to resize width (faster with LCtrl)\n"
+                           "Arrow keys left and right to shift by 1 byte (hold LAlt)\n"
+                           "F to flip FullPageReading\n"
+
 
 
                            ,"Controls",0);
@@ -97,6 +102,8 @@ int main() {
         final_ss << "mY     : " << vis.MouseY << std::endl;
         final_ss << "thick  : " << std::dec << vis.pthickness << std::endl;
         final_ss << "bits   : " << std::dec << vis.sfBitDepth << std::endl;
+        final_ss << "bitshit: " << std::dec << useful::schift << std::endl;
+        final_ss << "fulpage: " << std::dec << useful::BoolToString(vis.FullPageReading) << std::endl;
         //          "Value  : "
 
         /* Draw the things */
