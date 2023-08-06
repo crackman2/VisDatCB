@@ -45,10 +45,13 @@
 			<Add library="freetype" />
 			<Add library="gdi32" />
 			<Add library="winmm" />
+			<Add library="psapi" />
 			<Add directory="SFML-2.6.0/lib" />
 		</Linker>
 		<Unit filename="SimpleIni.h" />
-		<Unit filename="font_data.h" />
+		<Unit filename="VisDat.h" />
+		<Unit filename="controlchecker.h" />
+		<Unit filename="free_mono_data.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="resource.h" />
 		<Unit filename="resource.rc">

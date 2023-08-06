@@ -453,12 +453,12 @@
 
 1691002070 g:\script\c++\visdatcb\resource.h
 
-1691006900 source:g:\script\github\visdatcb\resource.rc
+1691096965 source:g:\script\github\visdatcb\resource.rc
 	"resource.h"
 
-1691002070 g:\script\github\visdatcb\resource.h
+1691096971 g:\script\github\visdatcb\resource.h
 
-1691015137 source:g:\script\github\visdatcb\main.cpp
+1691279316 source:g:\script\github\visdatcb\main.cpp
 	"resource.h"
 	<iostream>
 	<string>
@@ -467,11 +467,12 @@
 	<SFML/Graphics/RectangleShape.hpp>
 	<SFML/Window/Mouse.hpp>
 	<windows.h>
+	<psapi.h>
 	<tlhelp32.h>
-	"useful_stuff.h"
-	"SimpleIni.h"
 	<sstream>
 	<vector>
+	"VisDat.h"
+	"controlchecker.h"
 
 1688075092 g:\script\github\visdatcb\sfml-2.6.0\include\sfml\graphics.hpp
 	<SFML/Window.hpp>
@@ -891,7 +892,10 @@
 	<SFML/Graphics/Drawable.hpp>
 	<SFML/Window/GlResource.hpp>
 
-1691014174 g:\script\github\visdatcb\useful_stuff.h
+1691278002 g:\script\github\visdatcb\useful_stuff.h
+	<fstream>
+	<windows.h>
+	"SimpleIni.h"
 
 1380304970 g:\script\github\visdatcb\simpleini.h
 	<cstring>
@@ -908,4 +912,28 @@
 	<unicode/ucnv.h>
 	<windows.h>
 	<mbstring.h>
+
+1691103933 g:\script\github\visdatcb\free_mono_data.h
+
+1691279302 g:\script\github\visdatcb\visdat.h
+	<sstream>
+	<iostream>
+	<SFML/Graphics.hpp>
+	<SFML/Graphics/Image.hpp>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Window/Mouse.hpp>
+	<windows.h>
+	<tlhelp32.h>
+	<psapi.h>
+	"SimpleIni.h"
+	"free_mono_data.h"
+	"useful_stuff.h"
+
+1691278918 g:\script\github\visdatcb\controlchecker.h
+	<SFML/Graphics.hpp>
+	<SFML/Graphics/Image.hpp>
+	<SFML/Graphics/RectangleShape.hpp>
+	<SFML/Window/Mouse.hpp>
+	"useful_stuff.h"
+	"VisDat.h"
 

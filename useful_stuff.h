@@ -1,10 +1,19 @@
-#pragma once
+#ifndef USEFUL_STUFF_H
+#define USEFUL_STUFF_H
 
 #include <fstream>
+#include <windows.h>
+#include "SimpleIni.h"
 
 namespace useful {
 	int schift = 0;
 	bool dbg = false;
+
+	struct MODULEINFO {
+        LPVOID lpBaseOfDll;
+        DWORD SizeOfImage;
+        LPVOID EntryPoint;
+    };
 
 	void toClipboard(const std::string &s) {
 		OpenClipboard(0);
@@ -173,6 +182,7 @@ namespace useful {
             outFile << "; - 'bFullPageReading' reads entire screen at once as opposed to pixel by pixel.\n";
             outFile << ";             massive performance boost, but screen freezes when access to memory is denied.\n";
             outFile << ";             leaving it on 0 is more reliable\n\n";
+            outFile << "; Press F1 for help, in VisDat\n\n";
             outFile << "; Github: https://github.com/crackman2/VisDatCB \n";
 
 
@@ -205,4 +215,37 @@ namespace useful {
         system("pause");
         exit(0);
     }
+
+    bool wasAnArrowKeyPressed(char * ArrowDirection){ /* and which one? */
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+            *ArrowDirection = 'U';
+        } else
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+            *ArrowDirection = 'D';
+        } else
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+            *ArrowDirection = 'L';
+        } else
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+            *ArrowDirection = 'R';
+        }
+
+        if(*ArrowDirection != 0)
+            return true;
+        return false;
+    }
+
+    std::string ExtractFileName(const std::string &path) {
+    // Find the last occurrence of the directory separator character
+    size_t pos = path.find_last_of("\\/");
+    if (pos != std::string::npos) {
+        // Return the substring after the last separator
+        return path.substr(pos + 1);
+    }
+    // If no separator found, return the original path
+    return path;
 }
+}
+
+#endif // USEFUL_STUFF_H
